@@ -10,14 +10,17 @@ public class PanWithMouse : MonoBehaviour
     public Vector3 cameraOffset = new Vector3(10, 10, 10);
     Vector3 camSpeed;
 
+    private GameObject map;
+
+
     void Start()
     {
+        map = GameObject.FindWithTag("Map");
         OnCameraMoved();
     }
 
     void OnCameraMoved()
     {
-        GameObject map = GameObject.Find("Map");
         if (map)
         {
             cameraOffset = transform.position - map.transform.position;
@@ -26,8 +29,6 @@ public class PanWithMouse : MonoBehaviour
 
     void Update()
     {
-
-        GameObject map = GameObject.Find("Map");
         if (!map)
         {
             Debug.Log("Could not find map");

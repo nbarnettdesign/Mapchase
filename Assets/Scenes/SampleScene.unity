@@ -715,12 +715,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16221806cf5684ea09ba9538a22b6f79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
+  speed: 1
+  maxSpeed: 2
+  deadZone: 0.2
+  minVelocity: 0.0025
+  slowPerSecond: 1
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -748,7 +752,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -785,7 +789,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8461a3531db2f475b8546b7dafe37117, type: 3}
   m_Name: 
@@ -2245,6 +2249,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
+  maxSpeed: 20
+  deadZone: 0.5
+  minVelocity: 0.025
+  slowPerSecond: 1
 --- !u!1 &2051970829
 GameObject:
   m_ObjectHideFlags: 0

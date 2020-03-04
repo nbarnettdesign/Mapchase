@@ -6,56 +6,87 @@ public class CameraDrag : MonoBehaviour
 {
 
     public float speed = 100.0f;//easing speed
+    public float maxSpeed = 20f;
 
-    Vector3 hit_position = Vector3.zero;
-    Vector3 current_position = Vector3.zero;
-    Vector3 camera_position = Vector3.zero;
+    public float deadZone = 0.5f;
+    [Tooltip("When the object hits this speed it will 0 out its velocity")]
+    public float minVelocity = 0.025f;
+    [Tooltip("How much velocity this objects looses per second")]
+    public float slowPerSecond = 1;
+
+    Vector3 currentPosition = Vector3.zero;
+    Vector3 cameraPosition = Vector3.zero;
     float z = 0.0f;
 
     bool flag = false;
-    Vector3 target_position;
+    Vector3 targetPosition;
 
-    void Start()
+    private Vector3 dragStartPos;
+    private Vector3 dragEndPos;
+
+    private Vector3 velocity;
+    private float zPos;
+
+    private void Start()
     {
+        zPos = Camera.main.transform.position.z;
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            hit_position = Input.mousePosition;
-            camera_position = transform.position;
+            dragStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if (Input.GetMouseButton(0))
+        else if (Input.GetMouseButtonUp(0))
         {
-            current_position = Input.mousePosition;
+            dragEndPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             LeftMouseDrag();
-            flag = true;
         }
 
-        if (flag)
+        if (velocity.sqrMagnitude > maxSpeed * maxSpeed)
         {
-            transform.position = Vector3.MoveTowards(transform.position, target_position, Time.deltaTime * speed);
-            if (transform.position == target_position+Vector3.up)//reached?
-            {
-                flag = false;// stop moving
-            }
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         }
+        transform.position += velocity * speed;
+
+        ReduceVelocity();
     }
 
     void LeftMouseDrag()
     {
-        // From the Unity3D docs: "The z position is in world units from the camera."  In my case I'm using the y-axis as height
-        // with my camera facing back down the y-axis.  You can ignore this when the camera is orthograhic.
-        current_position.z = hit_position.z = camera_position.y;
+        //Get length of drag
+        Vector3 l = (dragEndPos - dragStartPos);
+        float dragDistance = l.magnitude;
+        
 
         // Get direction of movement. 
-        Vector3 direction = Camera.main.ScreenToWorldPoint(current_position) - Camera.main.ScreenToWorldPoint(hit_position);
+        Vector3 heading = transform.position - dragEndPos;
+        heading.z = 0;
 
-        // Invert direction to that terrain appears to move with the mouse.
-        direction = direction * -1;
+        if (heading.sqrMagnitude <= deadZone * deadZone)
+            return;
 
-        target_position = camera_position + direction;
+        float distance = heading.magnitude;
+        Vector3 direction = heading / distance;
+
+        direction *= dragDistance;
+
+        //if (Vector3.Dot(velocity, direction) < 0.5f)
+        //    velocity = -velocity;
+
+        velocity = direction * Time.deltaTime;
+    }
+
+    private void ReduceVelocity()
+    {
+        if (velocity == Vector3.zero)
+            return;
+
+        velocity += -velocity * (slowPerSecond * Time.deltaTime);
+
+        if (velocity.sqrMagnitude <= minVelocity * minVelocity)
+            velocity = Vector3.zero;
     }
 }

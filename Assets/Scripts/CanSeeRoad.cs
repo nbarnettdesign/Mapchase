@@ -4,22 +4,20 @@ using UnityEngine;
 
 public class CanSeeRoad : MonoBehaviour
 {
-    GameObject manager;
+    scoreboard manager;
 
     void Awake()
     {
-         manager = GameObject.FindGameObjectWithTag("GameController");
-        
+         manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<scoreboard>();
     }
 
     void OnBecameInvisible()
     {
-        manager.GetComponent<scoreboard>().ChangeScore(-1);
-        
+        manager.ChangeScore(-1);
     }
 
     private void OnBecameVisible()
     {
-        manager.GetComponent<scoreboard>().ChangeScore(1);
+        manager.ChangeScore(1);
     }
 }
